@@ -34,7 +34,7 @@ public class SAg implements BranchPredictor {
 
     @Override
     public BranchResult predict(BranchInstruction instruction) {
-        Bit[] ad = PSBHR.read(getRBAddressLine(SC.read())).read();
+        Bit[] ad = PSBHR.read(getRBAddressLine(instruction.getInstructionAddress())).read();
         SC.load(PHT.get(ad) != null ? PHT.get(ad) : getDefaultBlock());
         if (SC.read()[0] == Bit.ONE)
             return BranchResult.TAKEN;
@@ -44,10 +44,10 @@ public class SAg implements BranchPredictor {
     @Override
     public void update(BranchInstruction branchInstruction, BranchResult actual) {
         Bit[] temp=CombinationalLogic.count(SC.read(),BranchResult.isTaken(actual),CountMode.SATURATING);
-        ShiftRegister temper=PSBHR.read(getRBAddressLine(SC.read()));
+        ShiftRegister temper=PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress()));
         temper.insert(Bit.of(BranchResult.isTaken(actual)));
-        this.PHT.put(PSBHR.read(getRBAddressLine(SC.read())).read(),temp);
-        PSBHR.write(getRBAddressLine(SC.read()),temper.read());
+        this.PHT.put(PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress())).read(),temp);
+        PSBHR.write(getRBAddressLine(branchInstruction.getInstructionAddress()),temper.read());
     }
 
     private Bit[] getRBAddressLine(Bit[] branchAddress) {
