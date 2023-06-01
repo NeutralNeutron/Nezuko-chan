@@ -42,15 +42,10 @@ public class GAg implements BranchPredictor {
     @Override
     public BranchResult predict(BranchInstruction branchInstruction) {
         // TODO : complete Task 1
-        Bit[] bits =BHR.read();
-        Bit[]tempo=PHT.get(bits);
-        if(tempo==null)
-            SC.load(getDefaultBlock());
-        else
-            SC.load(tempo);
-        if(SC.read()[0]==Bit.ONE)
+        Bit[] ad = BHR.read();
+        SC.load(PHT.get(ad) != null ? PHT.get(ad) : getDefaultBlock());
+        if (SC.read()[0] == Bit.ONE)
             return BranchResult.TAKEN;
-            else
         return BranchResult.NOT_TAKEN;
     }
 
