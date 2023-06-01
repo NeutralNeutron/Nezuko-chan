@@ -7,6 +7,7 @@ import hardwar.branch.prediction.shared.devices.*;
 import java.util.Arrays;
 
 public class SAg implements BranchPredictor {
+    private Bit[] add;
     private final int branchInstructionSize;
     private final int KSize;
     private final ShiftRegister SC; // saturating counter register
@@ -34,7 +35,8 @@ public class SAg implements BranchPredictor {
 
     @Override
     public BranchResult predict(BranchInstruction instruction) {
-        Bit[] ad = PSBHR.read(getRBAddressLine(instruction.getInstructionAddress())).read();
+        add = getRBAddressLine(instruction.getInstructionAddress());
+        Bit[] ad = PSBHR.read(add).read();
         PHT.putIfAbsent(ad, getDefaultBlock());
         SC.load(PHT.get(ad));
         if (SC.read()[0] == Bit.ONE)
@@ -44,12 +46,13 @@ public class SAg implements BranchPredictor {
 
     @Override
     public void update(BranchInstruction branchInstruction, BranchResult actual) {
+        add = getRBAddressLine(branchInstruction.getInstructionAddress());
         Bit[] bits = SC.read();
         bits = CombinationalLogic.count(bits, BranchResult.isTaken(actual), CountMode.SATURATING);
-        this.PHT.put(PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress())).read(), bits);
-        ShiftRegister s = PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress()));
+        this.PHT.put(PSBHR.read(add).read(), bits);
+        ShiftRegister s = PSBHR.read(add);
         s.insert(Bit.of(BranchResult.isTaken(actual)));
-        PSBHR.write(getRBAddressLine(branchInstruction.getInstructionAddress()), s.read());
+        PSBHR.write(add, s.read());
     }
 
     private Bit[] getRBAddressLine(Bit[] branchAddress) {
