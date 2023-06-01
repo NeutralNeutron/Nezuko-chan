@@ -35,7 +35,8 @@ public class SAg implements BranchPredictor {
     @Override
     public BranchResult predict(BranchInstruction instruction) {
         Bit[] ad = PSBHR.read(getRBAddressLine(instruction.getInstructionAddress())).read();
-        SC.load(PHT.get(ad) != null ? PHT.get(ad) : getDefaultBlock());
+        PHT.putIfAbsent(ad, getDefaultBlock());
+        SC.load(PHT.get(ad));
         if (SC.read()[0] == Bit.ONE)
             return BranchResult.TAKEN;
         return BranchResult.NOT_TAKEN;
