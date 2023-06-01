@@ -26,7 +26,7 @@ public class SAg implements BranchPredictor {
         PSBHR = new RegisterBank(KSize, BHRSize);
 
         // Initialize the PHT with a size of 2^size and each entry having a saturating counter of size "SCSize"
-        PHT = new PageHistoryTable(1<<KSize, SCSize);
+        PHT = new PageHistoryTable(1<<BHRSize, SCSize);
 
         // Initialize the SC register
         SC = new SIPORegister("SC",SCSize, getDefaultBlock());
@@ -46,6 +46,8 @@ public class SAg implements BranchPredictor {
     public void update(BranchInstruction branchInstruction, BranchResult actual) {
         Bit[] temp=CombinationalLogic.count(SC.read(),BranchResult.isTaken(actual),CountMode.SATURATING);
         this.PHT.put(PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress())).read(),temp);
+
+
 
         ShiftRegister temper=PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress()));
         temper.insert(Bit.of(BranchResult.isTaken(actual)));
