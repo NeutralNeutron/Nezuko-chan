@@ -63,13 +63,10 @@ public class GAg implements BranchPredictor {
     @Override
     public void update(BranchInstruction instruction, BranchResult actual) {
         // TODO: complete Task 2
-        //this.SC=this.PHT.get(this.BHR.read());
-        if (BranchResult.isTaken(actual) && !(SC.read()[0]==Bit.ONE&&SC.read()[1]==Bit.ONE)){
-            this.PHT.put(this.BHR.read(), CombinationalLogic.count(this.SC.read(), true, CountMode.SATURATING));
-        }
-        if (!BranchResult.isTaken(actual) && !(SC.read()[0]==Bit.ZERO&&SC.read()[1]==Bit.ZERO)){
-            this.PHT.put(this.BHR.read(), CombinationalLogic.count(this.SC.read(), false, CountMode.SATURATING));
-        }
+        Bit[] temp=CombinationalLogic.count(SC.read(),BranchResult.isTaken(actual),CountMode.SATURATING);
+        this.PHT.put(BHR.read(),temp);
+        BHR.insert(Bit.of(BranchResult.isTaken(actual)));
+        
     }
 
     /**
