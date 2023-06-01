@@ -29,7 +29,7 @@ public class SAg implements BranchPredictor {
         PHT = new PageHistoryTable(1<<KSize, SCSize);
 
         // Initialize the SC register
-        SC = new SIPORegister("SC",SCSize, getDefaultBlock());;;
+        SC = new SIPORegister("SC",SCSize, getDefaultBlock());
     }
 
     @Override
