@@ -26,7 +26,7 @@ public class SAg implements BranchPredictor {
         PSBHR = new RegisterBank(KSize, BHRSize);
 
         // Initialize the PHT with a size of 2^size and each entry having a saturating counter of size "SCSize"
-        PHT = new PageHistoryTable(1<<BHRSize, SCSize);
+        PHT = new PageHistoryTable(1<<KSize, SCSize);
 
         // Initialize the SC register
         SC = new SIPORegister("SC",SCSize, getDefaultBlock());;;
