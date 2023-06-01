@@ -44,14 +44,12 @@ public class SAg implements BranchPredictor {
 
     @Override
     public void update(BranchInstruction branchInstruction, BranchResult actual) {
-        Bit[] temp=CombinationalLogic.count(SC.read(),BranchResult.isTaken(actual),CountMode.SATURATING);
-        this.PHT.put(PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress())).read(),temp);
-
-
-
-        ShiftRegister temper=PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress()));
-        temper.insert(Bit.of(BranchResult.isTaken(actual)));
-        PSBHR.write(getRBAddressLine(branchInstruction.getInstructionAddress()),temper.read());
+        Bit[] bits = SC.read();
+        bits = CombinationalLogic.count(bits, BranchResult.isTaken(actual), CountMode.SATURATING);
+        this.PHT.put(PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress())).read(), bits);
+        ShiftRegister s = PSBHR.read(getRBAddressLine(branchInstruction.getInstructionAddress()));
+        s.insert(Bit.of(BranchResult.isTaken(actual)));
+        PSBHR.write(getRBAddressLine(branchInstruction.getInstructionAddress()), s.read());
     }
 
     private Bit[] getRBAddressLine(Bit[] branchAddress) {
