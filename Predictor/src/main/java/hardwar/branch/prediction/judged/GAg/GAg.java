@@ -61,7 +61,6 @@ public class GAg implements BranchPredictor {
         Bit[] temp=CombinationalLogic.count(SC.read(),BranchResult.isTaken(actual),CountMode.SATURATING);
         this.PHT.put(BHR.read(),temp);
         BHR.insert(Bit.of(BranchResult.isTaken(actual)));
-        
     }
 
     /**
